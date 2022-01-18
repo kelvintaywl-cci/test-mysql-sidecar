@@ -11,7 +11,6 @@ jobs:
       - run:
           name: check our DB is ready!
           # Showcase a simple way to check on our server, besides dockerize
-          name: Wait on application to be ready
           command: |
             N=8
             while [ $N -gt 0 ]
