@@ -14,6 +14,8 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - run: |
+          apt search mysql-client
       - run:
           name: check our DB is ready!
           # Showcase a simple way to check on our server, besides dockerize
@@ -34,7 +36,8 @@ jobs:
           name: feed our SQL files
           command: |
             echo "time to ingest these tasty SQL files!"
-            docker ps
+            # TODO: mysql 
+            
 
 workflows:
   main:
