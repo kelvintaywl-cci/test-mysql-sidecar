@@ -5,6 +5,13 @@ jobs:
     docker:
       - image: cimg/base:stable
       - image: mysql:latest
+        environment:
+        command: "--default-authentication-plugin=mysql_native_password"
+        environment:
+          - MYSQL_HOST: 127.0.0.1
+          - MYSQL_USER: rails
+          - MYSQL_PASSWORD: rails
+          - MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     resource_class: medium
     steps:
       - checkout
