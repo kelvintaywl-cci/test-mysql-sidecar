@@ -15,7 +15,7 @@ jobs:
     steps:
       - checkout
       - run: |
-          apt search mysql-client
+          sudo apt-get update && sudo apt-get install -y mysql-client
       - run:
           name: check our DB is ready!
           # Showcase a simple way to check on our server, besides dockerize
@@ -36,7 +36,7 @@ jobs:
           name: feed our SQL files
           command: |
             echo "time to ingest these tasty SQL files!"
-            # TODO: mysql 
+            mysql -h 127.0.0.1 -u root < dump.sql
             
 
 workflows:
