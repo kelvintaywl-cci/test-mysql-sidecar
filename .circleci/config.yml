@@ -1,0 +1,37 @@
+version: 2.1
+
+jobs:
+  fun-with-mysql:
+    docker:
+      - image: cimg/base:stable
+      - image: mysql:latest
+    resource_class: medium
+    steps:
+      - checkout
+      - run:
+          name: check our DB is ready!
+          # Showcase a simple way to check on our server, besides dockerize
+          name: Wait on application to be ready
+          command: |
+            N=8
+            while [ $N -gt 0 ]
+            do
+              if $(nc -z 127.0.0.1 3306); then
+                echo "Connected to MySQL!"
+                exit 0
+              fi
+              echo "Not connected; retrying"
+              N=$(( $N - 1 ))
+              sleep 1
+            done
+            exit 1
+      - run:
+          name: feed our SQL files
+          command: |
+            echo "time to ingest these tasty SQL files!"
+            docker ps
+
+workflows:
+  main:
+    jobs:
+      - fun-with-mysql
