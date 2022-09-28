@@ -36,7 +36,7 @@ jobs:
       - run:
           name: feed our SQL files
           command: |
-            echo "time to ingest these tasty SQL files!"
+            echo "time to ingest these tasty SQL files"
             mysql -h 127.0.0.1 -u root < dump.sql
       - run:
           name: run some SQL to confirm
