@@ -41,7 +41,7 @@ jobs:
       - run:
           name: run some SQL to confirm
           command: |
-            mysql -h 127.0.0.1 -u rails -D activerecord_unittest -e "SHOW TABLES;"
+            mysql -h 127.0.0.1 -u rails -e "SHOW DATABASES;"
 
 workflows:
   main:
