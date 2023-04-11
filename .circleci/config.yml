@@ -21,7 +21,7 @@ jobs:
           name: check our DB is ready!
           # Showcase a simple way to check on our server, besides dockerize
           command: |
-            N=8
+            N=20
             while [ $N -gt 0 ]
             do
               if $(nc -z 127.0.0.1 3306); then
