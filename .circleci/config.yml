@@ -35,7 +35,7 @@ jobs:
           command: |
             docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -e "CREATE DATABASE foobar default character set utf8mb4;"
 
-            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -D foobar -e "SHOW TABLES;"
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -D foobar -e "SELECT NOW();"
       - run: docker swarm leave
 
 workflows:
