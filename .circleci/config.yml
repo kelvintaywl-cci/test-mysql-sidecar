@@ -1,49 +1,45 @@
 version: 2.1
 
-jobs:
-  fun-with-mysql:
+executors:
+  main:
     docker:
-      - image: cimg/base:stable
-      - image: mysql:latest
-        command: "--default-authentication-plugin=mysql_native_password"
-        environment:
-          - MYSQL_HOST: 127.0.0.1
-          # these will be created by our dump.sql
-          #  - MYSQL_USER: rails
-          #  - MYSQL_PASSWORD: rails
-          - MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      - image: alienfast/ci-ruby:5.1.71
     resource_class: medium
+
+jobs:
+  swarm:
+    executor: main
+    environment:
+      CUSTOM_IMAGE_NAMETAG: kelvintaywl-cci/swarm-test
     steps:
+      - setup_remote_docker:
+          version: 18.05.0-ce
       - checkout
-      - run: |
-          sudo apt-get update && sudo apt-get install -y mysql-client
+      - run: docker info
       - run:
-          name: check our DB is ready!
-          # Showcase a simple way to check on our server, besides dockerize
+          name: Start Docker Swarm
           command: |
-            N=20
-            while [ $N -gt 0 ]
-            do
-              if $(nc -z 127.0.0.1 3306); then
-                echo "Connected to MySQL!"
-                exit 0
-              fi
-              echo "Not connected; retrying"
-              N=$(( $N - 1 ))
-              sleep 1
-            done
-            exit 1
+            docker swarm init
+            docker stack deploy -c swarm.yaml app --with-registry-auth
       - run:
-          name: feed our SQL files
+          name: Inspect containers
           command: |
-            echo "time to ingest these tasty SQL files"
-            mysql -h 127.0.0.1 -u root < dump.sql
+            docker service ls
+            docker ps
       - run:
-          name: run some SQL to confirm
+          name: build image
           command: |
-            mysql -h 127.0.0.1 -u rails -e "SHOW DATABASES;"
+            docker build --tag $CUSTOM_IMAGE_NAMETAG .
+      # at this point, the DB should be ready to connect
+      - run:
+          name: Spin up container to interact with DB
+          command: |
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root < dump.sql
+
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u rails -e "SHOW DATABASES;"
+      - run: docker swarm leave
 
 workflows:
   main:
     jobs:
-      - fun-with-mysql
+      - swarm
