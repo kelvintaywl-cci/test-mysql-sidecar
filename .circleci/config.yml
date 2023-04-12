@@ -1,18 +1,17 @@
 version: 2.1
 
 executors:
-  main:
-    docker:
-      - image: alienfast/ci-ruby:5.1.71
+  linux:
+    machine:
+      image: ubuntu-2204:2023.02.1
     resource_class: medium
 
 jobs:
   swarm:
-    executor: main
+    executor: linux
     environment:
       CUSTOM_IMAGE_NAMETAG: kelvintaywl-cci/swarm-test
     steps:
-      - setup_remote_docker
       - checkout
       - run: docker info
       - run:
@@ -36,7 +35,7 @@ jobs:
             docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -e "CREATE DATABASE foobar default character set utf8mb4;"
 
             docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -D foobar -e "SELECT NOW();"
-      - run: docker swarm leave
+      - run: docker swarm leave --force
 
 workflows:
   main:
