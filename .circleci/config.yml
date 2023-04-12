@@ -18,12 +18,15 @@ jobs:
       - run:
           name: Start Docker Compose
           command: |
-            docker swarm init
-            docker-compose -f swarm.yaml up -d
+            docker-compose -p app -f swarm.yaml up -d
       - run:
           name: Inspect containers
           command: |
             docker ps
+      - run:
+          name: Inspect networks
+          command: |
+            docker network ls
       - run:
           name: build image
           command: |
