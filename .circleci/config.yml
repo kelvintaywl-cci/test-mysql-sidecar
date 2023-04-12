@@ -7,7 +7,7 @@ executors:
     resource_class: medium
 
 jobs:
-  swarm:
+  compose:
     executor: main
     environment:
       CUSTOM_IMAGE_NAMETAG: kelvintaywl-cci/swarm-test
@@ -16,14 +16,13 @@ jobs:
       - checkout
       - run: docker info
       - run:
-          name: Start Docker Swarm
+          name: Start Docker Compose
           command: |
             docker swarm init
-            docker stack deploy -c swarm.yaml app --with-registry-auth
+            docker-compose -f swarm.yaml up -d
       - run:
           name: Inspect containers
           command: |
-            docker service ls
             docker ps
       - run:
           name: build image
@@ -33,12 +32,12 @@ jobs:
       - run:
           name: Spin up container to interact with DB
           command: |
-            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -e "CREATE DATABASE foobar default character set utf8mb4;"
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db_1 -u root -e "CREATE DATABASE foobar default character set utf8mb4;"
 
-            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -D foobar -e "SELECT NOW();"
-      - run: docker swarm leave
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db_1 -u root -D foobar -e "SELECT NOW();"
+      - run: docker-compose -f swarm.yaml down
 
 workflows:
   main:
     jobs:
-      - swarm
+      - compose
