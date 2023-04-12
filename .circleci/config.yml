@@ -33,9 +33,9 @@ jobs:
       - run:
           name: Spin up container to interact with DB
           command: |
-            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root < dump.sql
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -e "CREATE DATABASE foobar default character set utf8mb4;"
 
-            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u rails -e "SHOW DATABASES;"
+            docker run --rm --network app_mesh $CUSTOM_IMAGE_NAMETAG mysql -h app_db -u root -D foobar "SHOW TABLES;"
       - run: docker swarm leave
 
 workflows:
