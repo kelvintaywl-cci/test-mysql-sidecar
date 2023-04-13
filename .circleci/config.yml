@@ -11,8 +11,7 @@ jobs:
     parameters:
       swarm_address_pool:
         type: string
-        # 256 allocatable IPs 10.0.0.x
-        default: '10.10.0.0/24'
+        default: '10.20.0.0/16'
     executor: main
     environment:
       CUSTOM_IMAGE_NAMETAG: kelvintaywl-cci/swarm-test
