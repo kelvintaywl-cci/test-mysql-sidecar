@@ -13,6 +13,7 @@ jobs:
         type: string
         default: '10.20.0.0/16'
     executor: main
+    parallelism: 11
     environment:
       CUSTOM_IMAGE_NAMETAG: kelvintaywl-cci/swarm-test
     steps:
