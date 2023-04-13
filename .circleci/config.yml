@@ -8,6 +8,11 @@ executors:
 
 jobs:
   swarm:
+    parameters:
+      swarm_address_pool:
+        type: string
+        # 256 allocatable IPs 10.0.0.x
+        default: '10.10.0.0/24'
     executor: main
     environment:
       CUSTOM_IMAGE_NAMETAG: kelvintaywl-cci/swarm-test
@@ -18,7 +23,7 @@ jobs:
       - run:
           name: Start Docker Swarm
           command: |
-            docker swarm init
+            docker swarm init --default-addr-pool '<< parameters.swarm_address_pool >>'
             docker stack deploy -c swarm.yaml app --with-registry-auth
       - run:
           name: Inspect containers
