@@ -24,7 +24,7 @@ jobs:
             N=20
             while [ $N -gt 0 ]
             do
-              if $(mysql -h 127.0.0.1 -u root -e "/* ping */ SELECT 1"); then
+              if $(mysql -h 127.0.0.1 -u root -e "/* ping */ SELECT 1" > /dev/null); then
                 echo "Connected to MySQL!"
                 exit 0
               fi
