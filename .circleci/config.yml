@@ -1,49 +1,27 @@
 version: 2.1
 
-jobs:
-  fun-with-mysql:
+executors:
+  jdk-postgres:
     docker:
-      - image: cimg/base:stable
-      - image: mysql:latest
-        command: "--default-authentication-plugin=mysql_native_password"
+      - image: cimg/openjdk:17.0
+      - image: cimg/postgres:14.7
+        user: postgres
+        auth:
+          username: $DOCKER_HUB_USERNAME
+          password: $DOCKER_HUB_ACCESS_TOKEN
         environment:
-          - MYSQL_HOST: 127.0.0.1
-          # these will be created by our dump.sql
-          #  - MYSQL_USER: rails
-          #  - MYSQL_PASSWORD: rails
-          - MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          POSTGRES_USER: postgres
+          POSTGRES_DB: circle_test
+          POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+          TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+
+jobs:
+  fun-with-postgresql:
+    executor: jdk-postgres
     resource_class: medium
     steps:
       - checkout
-      - run: |
-          sudo apt-get update && sudo apt-get install -y mysql-client
-      - run:
-          name: check our DB is ready!
-          # Showcase a simple way to check on our server, besides dockerize
-          command: |
-            N=20
-            while [ $N -gt 0 ]
-            do
-              if $(mysql -h 127.0.0.1 -u root -e "PING" > /dev/null); then
-                echo "Connected to MySQL!"
-                exit 0
-              fi
-              echo "Not connected; retrying"
-              N=$(( $N - 1 ))
-              sleep 1
-            done
-            exit 1
-      - run:
-          name: feed our SQL files
-          command: |
-            echo "time to ingest these tasty SQL files"
-            mysql -h 127.0.0.1 -u root < dump.sql
-      - run:
-          name: run some SQL to confirm
-          command: |
-            mysql -h 127.0.0.1 -u rails -e "SHOW DATABASES;"
-
 workflows:
   main:
     jobs:
-      - fun-with-mysql
+      - fun-with-postgresql
