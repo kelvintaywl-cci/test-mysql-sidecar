@@ -22,7 +22,7 @@ jobs:
     executor:
       name: jdk-postgres
       pg_img: cimg/postgres:14.7
-      pg_user: postgres
+      pg_user: root
     resource_class: medium
     steps:
       - checkout
