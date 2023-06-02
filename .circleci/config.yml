@@ -9,12 +9,14 @@ executors:
         type: string
     docker:
       - image: cimg/openjdk:17.0
-      - image: << parameters.pg_img >>
-        user: << parameters.pg_user >>
+      # no need to set user,
+      # set specific Postgres password
+      - image: cimg/postgres:14.7
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: circle_test
           POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+          POSTGRES_PASSWORD: "foobar"
           TZ: "/usr/share/zoneinfo/Asia/Tokyo"
 
 jobs:
