@@ -2,13 +2,15 @@ version: 2.1
 
 executors:
   jdk-postgres:
+    parameters:
+      pg_img:
+        type: string
+      pg_user:
+        type: string
     docker:
       - image: cimg/openjdk:17.0
-      - image: cimg/postgres:14.7
-        user: postgres
-        auth:
-          username: $DOCKER_HUB_USERNAME
-          password: $DOCKER_HUB_ACCESS_TOKEN
+      - image: << parameters.pg_img >>
+        user: << parameters.pg_user >>
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: circle_test
@@ -17,7 +19,10 @@ executors:
 
 jobs:
   fun-with-postgresql:
-    executor: jdk-postgres
+    executor:
+      name: jdk-postgres
+      pg_img: cimg/postgres:14.7
+      pg_user: postgres
     resource_class: medium
     steps:
       - checkout
