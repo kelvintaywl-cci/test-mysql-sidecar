@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   fun-with-mysql:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/ruby:3.1.2
       - image: mysql:latest
         command: "--default-authentication-plugin=mysql_native_password"
         environment:
@@ -14,9 +14,11 @@ jobs:
           - MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     resource_class: medium
     steps:
-      - checkout
+      - setup_remote_docker:
+          version: 20.10.6
       - run: |
-          sudo apt-get update && sudo apt-get install -y mysql-client
+          docker run -d -p "3306:3306" -e 'MYSQL_ROOT_PASSWORD=supersecretpassword' cimg/mysql:8.0.33
+          sleep 10
       - run:
           name: check our DB is ready!
           # Showcase a simple way to check on our server, besides dockerize
@@ -33,16 +35,6 @@ jobs:
               sleep 1
             done
             exit 1
-      - run:
-          name: feed our SQL files
-          command: |
-            echo "time to ingest these tasty SQL files"
-            mysql -h 127.0.0.1 -u root < dump.sql
-      - run:
-          name: run some SQL to confirm
-          command: |
-            mysql -h 127.0.0.1 -u rails -e "SHOW DATABASES;"
-
 workflows:
   main:
     jobs:
