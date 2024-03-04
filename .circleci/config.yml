@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   fun-with-mysql:
     docker:
-      - image: cimg/ruby:3.1.2
+      - image: cimg/base:current
     resource_class: medium
     steps:
       - setup_remote_docker:
