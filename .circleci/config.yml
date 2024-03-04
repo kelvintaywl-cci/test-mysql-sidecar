@@ -4,18 +4,10 @@ jobs:
   fun-with-mysql:
     docker:
       - image: cimg/ruby:3.1.2
-      - image: mysql:latest
-        command: "--default-authentication-plugin=mysql_native_password"
-        environment:
-          - MYSQL_HOST: 127.0.0.1
-          # these will be created by our dump.sql
-          #  - MYSQL_USER: rails
-          #  - MYSQL_PASSWORD: rails
-          - MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     resource_class: medium
     steps:
       - setup_remote_docker:
-          version: 20.10.6
+          version: 20.10.14
       - run: |
           docker run -d -p "3306:3306" -e 'MYSQL_ROOT_PASSWORD=supersecretpassword' cimg/mysql:8.0.33
           sleep 10
