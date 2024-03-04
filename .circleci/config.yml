@@ -7,7 +7,7 @@ jobs:
     resource_class: medium
     steps:
       - setup_remote_docker:
-          version: 20.10.14
+          version: 20.10.24
       - run: |
           docker run -d -p "3306:3306" -e 'MYSQL_ROOT_PASSWORD=supersecretpassword' cimg/mysql:8.0.33
           sleep 10
